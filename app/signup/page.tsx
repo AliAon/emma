@@ -11,8 +11,8 @@ import SignupForm from "@/components/SignupForm";
 import { useSignupUserMutation } from "@/services/userApi";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(true);
@@ -36,7 +36,14 @@ export default function Signup() {
         password: values.password,
         name: values.name,
       }).unwrap();
-      toast.success("Signup successful!");
+      toast("Signup successful!", {
+        description: "Please check your email for verification.",
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+
       router.push("/signin");
     } catch (error) {
       console.error("Signup error:", error);

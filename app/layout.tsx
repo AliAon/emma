@@ -10,6 +10,7 @@ import "./globals.css";
 import ClientOnly from "@/components/common/client-only";
 import { ReduxProvider } from "@/redux/redux-provider";
 import { Toaster } from "react-hot-toast";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ReduxProvider>
           <ClientOnly>{children}</ClientOnly>
           <Toaster />
+          <Sonner />
         </ReduxProvider>
       </body>
     </html>

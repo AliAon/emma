@@ -1,16 +1,21 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabaseServer } from "../../utils/supabaseServer";
-import { getAuthUserId } from "../../utils/auth";
+import { supabaseServer } from "../../../utils/supabaseServer";
+import { getAuthUserId } from "../../../utils/auth";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method !== "POST") return res.status(405).end();
 
     // Body can be string or object on Vercel
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    const body =
+      typeof req.body === "string"
+        ? JSON.parse(req.body || "{}")
+        : req.body || {};
     const { cedula, full_name } = body || {};
     if (!cedula || !full_name) {
-      return res.status(400).json({ error: "cedula and full_name are required" });
+      return res
+        .status(400)
+        .json({ error: "cedula and full_name are required" });
     }
 
     const userId = await getAuthUserId(req);
@@ -38,9 +43,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           // your schema fields:
           is_verified: false,
           cedula_verified: false,
-          certified: false
+          certified: false,
         })
-        .select("id, full_name, cedula, is_verified, cedula_verified, certified")
+        .select(
+          "id, full_name, cedula, is_verified, cedula_verified, certified"
+        )
         .single();
 
       if (insErr) return res.status(400).json({ error: insErr.message });
@@ -49,7 +56,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // 3) Link users.doctor_id ⇄ doctors.id
       const { error: linkErr } = await sb
         .from("users")
-        .upsert({ auth_user_id: userId, doctor_id: doctorId }, { onConflict: "auth_user_id" });
+        .upsert(
+          { auth_user_id: userId, doctor_id: doctorId },
+          { onConflict: "auth_user_id" }
+        );
       if (linkErr) return res.status(400).json({ error: linkErr.message });
 
       return res.status(200).json({ doctor: inserted });
@@ -59,7 +69,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from("doctors")
         .update({ cedula, full_name })
         .eq("id", doctorId)
-        .select("id, full_name, cedula, is_verified, cedula_verified, certified")
+        .select(
+          "id, full_name, cedula, is_verified, cedula_verified, certified"
+        )
         .single();
 
       if (updErr) return res.status(400).json({ error: updErr.message });
@@ -67,7 +79,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // 3b) Ensure users link exists
       const { error: linkErr } = await sb
         .from("users")
-        .upsert({ auth_user_id: userId, doctor_id: doctorId }, { onConflict: "auth_user_id" });
+        .upsert(
+          { auth_user_id: userId, doctor_id: doctorId },
+          { onConflict: "auth_user_id" }
+        );
       if (linkErr) return res.status(400).json({ error: linkErr.message });
 
       return res.status(200).json({ doctor: updated });

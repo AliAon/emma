@@ -1,7 +1,7 @@
 // api/me/doctor.ts
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabaseServer } from "../../utils/supabaseServer";
-import { getAuthUserId } from "../../utils/auth";
+import { supabaseServer } from "../../../utils/supabaseServer";
+import { getAuthUserId } from "../../../utils/auth";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabaseServer } from "../../utils/supabaseServer";
-import { getAuthUserId } from "../../utils/auth";
+import { supabaseServer } from "../../../utils/supabaseServer";
+import { getAuthUserId } from "../../../utils/auth";
 import { createHmac } from "crypto";
 
 function hmacHex(str: string) {

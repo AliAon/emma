@@ -11,12 +11,6 @@ import React from "react";
 
 export default function Home() {
   return (
-    // <main style={{ padding: 24 }}>
-    //   <h1 className="text-red-300">Emma Backend (Next.js)</h1>
-    //   <p>
-    //     Go to <a href="/verify">/verify</a> to start Veriff.
-    //   </p>
-    // </main>
     <>
       <Navbar />
       <Hero />

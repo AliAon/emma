@@ -6,6 +6,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { userApi } from "../services/userApi";
+import { profileApi } from "../services/profileApi";
 
 const persistConfig = {
   key: "root",
@@ -19,7 +20,9 @@ const makeStore = () =>
   configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware: any) =>
-      getDefaultMiddleware().concat(userApi.middleware),
+      getDefaultMiddleware()
+        .concat(userApi.middleware)
+        .concat(profileApi.middleware),
   });
 
 const store = makeStore();

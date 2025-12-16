@@ -1,58 +1,85 @@
 "use client";
+
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import { ErrorMessage, useFormikContext } from "formik";
 
-export default function StepFive({ setStep, total = 5, handleNext }) {
-  const [license, setLicense] = useState("");
+type FormValues = {
+  professional_id: string;
+};
 
-  const handleBack = (e) => {
-    e.preventDefault();
+type Props = {
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  total?: number;
+  handleNext: () => void;
+};
+
+export default function StepFive({ setStep, total = 5 }: Props) {
+  const { values, setFieldValue, validateForm, setTouched } =
+    useFormikContext<FormValues>();
+
+  const handleNext = async () => {
+    const errors = await validateForm();
+
+    setTouched({ professional_id: true });
+
+    if (errors.professional_id) return;
+
+    setStep((prev) => (prev + 1) % total);
+  };
+
+  const handleBack = () => {
     setStep((prev) => (prev - 1 + total) % total);
   };
 
   return (
-    <>
-      <form onSubmit={handleNext} className="space-y-6 relative h-[60vh]">
-        {/* Step Title */}
-        <h2 className="text-3xl font-normal text-black">Professional ID</h2>
-        <p className="text-[#4E4E4E] font-normal text-base">
-          Please provide your professional license number (Cédula Profesional)
-          for verification purposes.
-        </p>
+    <div className="space-y-6 relative h-[60vh]">
+      {/* Step Title */}
+      <h2 className="text-3xl font-normal text-black">Professional ID</h2>
+      <p className="text-[#4E4E4E] text-base">
+        Please provide your professional license number (Cédula Profesional) for
+        verification purposes.
+      </p>
 
-        {/* Selector */}
-        <div>
-          <Input
-            type="text"
-            placeholder="Professional ID"
-            value={license}
-            onChange={(e) => setLicense(e.target.value)}
-          />
-        </div>
+      {/* Input */}
+      <div className="max-w-md">
+        <Input
+          type="text"
+          placeholder="Professional ID"
+          value={values.professional_id}
+          onChange={(e) => setFieldValue("professional_id", e.target.value)}
+          className="w-full py-2! rounded-xl md:py-full"
+        />
+        <ErrorMessage
+          name="professional_id"
+          component="p"
+          className="text-red-500 text-xs mt-1"
+        />
+      </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-25 absolute bottom-0 w-full">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={handleBack}
-            className="px-8 py-3 rounded-xl"
-            size={undefined}
-          >
-            Back
-          </Button>
+      {/* Navigation Buttons */}
+      <div className="flex justify-between absolute bottom-0 w-full">
+        <Button
+          variant="outline"
+          type="button"
+          size={undefined}
+          onClick={handleBack}
+          className="px-8 py-3 rounded-xl"
+        >
+          Back
+        </Button>
 
-          <Button
-            type="submit"
-            className="px-8 py-3 rounded-xl"
-            variant={undefined}
-            size={undefined}
-          >
-            Next
-          </Button>
-        </div>
-      </form>
-    </>
+        <Button
+          type="button"
+          size={undefined}
+          variant={undefined}
+          onClick={handleNext}
+          className="px-8 py-3 rounded-xl"
+        >
+          Next
+        </Button>
+      </div>
+    </div>
   );
 }

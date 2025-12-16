@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useFormikContext } from "formik";
 
 export default function StepSix({ setStep, total = 6 }) {
+  const { errors, values } = useFormikContext();
   const handleBack = (e) => {
     e.preventDefault();
     setStep((prev) => (prev - 1 + total) % total);
   };
+  console.log("Errors:", errors);
+  console.log("values", values);
 
   return (
     <>
@@ -33,16 +37,14 @@ export default function StepSix({ setStep, total = 6 }) {
               Back
             </Button>
           </Link>
-          <Link href="/verif-plugin">
-            <Button
-              type="button"
-              className="px-8 py-3 rounded-xl"
-              variant={undefined}
-              size={undefined}
-            >
-              Start Verification
-            </Button>
-          </Link>
+          <Button
+            type="submit"
+            className="px-8 py-3 rounded-xl"
+            variant={undefined}
+            size={undefined}
+          >
+            Start Verification
+          </Button>
         </div>
       </div>
     </>

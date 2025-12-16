@@ -8,11 +8,45 @@ import StepTwo from "@/components/common/ob-board/step-two";
 import StepFour from "@/components/common/ob-board/step-four";
 import StepFive from "@/components/common/ob-board/step-five";
 import StepSix from "@/components/common/ob-board/step-six";
+import { Form, Formik } from "formik";
+import * as Yup from "yup";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useCreateProfileMutation } from "@/services/profileApi";
+
+export const validationSchema = Yup.object({
+  user_id: Yup.string().required("User is required"),
+
+  whatsapp_no: Yup.string()
+    .required("WhatsApp number is required")
+    .min(7, "Too short")
+    .max(15, "Too long"),
+
+  countryDial: Yup.string().required("Country code is required"),
+
+  phone: Yup.string()
+    .required("Phone number is required")
+    .matches(/^[0-9]+$/, "Only numbers are allowed")
+    .min(7, "Too short")
+    .max(15, "Too long"),
+
+  city: Yup.string().required("City is required"),
+
+  country: Yup.string().required("Country is required"),
+
+  speciality: Yup.string().required("Speciality is required"),
+
+  professional_id: Yup.string().required("Professional ID is required"),
+});
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [country, setCountry] = useState("");
+  const user = useSelector((state: any) => state.auth.user);
+  const [CreateProfile, { isLoading }] = useCreateProfileMutation();
+  const router = useRouter();
 
   const totalSteps = 6;
 
@@ -31,19 +65,11 @@ export default function Onboarding() {
     },
     {
       name: "Country",
-      component: (
-        <StepThree
-          setStep={setStep}
-          total={totalSteps}
-          setCountry={setCountry}
-        />
-      ),
+      component: <StepThree setStep={setStep} total={totalSteps} />,
     },
     {
       name: "City",
-      component: (
-        <StepTwo setStep={setStep} total={totalSteps} country={country} />
-      ),
+      component: <StepTwo setStep={setStep} total={totalSteps} />,
     },
     {
       name: "Specialty",
@@ -115,9 +141,38 @@ export default function Onboarding() {
           </div>
         </div>
       )}
-
       <div className="lg:col-span-9 lg:max-w-lg mx-auto lg:flex lg:items-center lg:justify-center py-16 p-6 lg:p-6">
-        {steps[step].component}
+        <Formik
+          initialValues={{
+            user_id: user?.id,
+            whatsapp_no: "",
+            city: "",
+            country: "",
+            speciality: "",
+            professional_id: "",
+            countryDial: "",
+            phone: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={(values) => {
+            CreateProfile(values)
+              .unwrap()
+              .then(() => {
+                toast.success("Profile created successfully!");
+                router.push("/verif-plugin");
+              })
+              .catch((error) => {
+                toast.error("Profile creation failed. Please try again.");
+                // toast.error(error?.data?.message);
+              });
+          }}
+        >
+          {({ handleSubmit }) => (
+            <Form onSubmit={handleSubmit}>
+              <div>{steps[step].component}</div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );

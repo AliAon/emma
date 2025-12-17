@@ -18,20 +18,22 @@ export default function SignupForm() {
     setMsg(null);
     try {
       const supabase = supabaseBrowser();
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName } }
+        options: { data: { full_name: fullName } },
       });
       if (error) throw error;
 
       // ensure session exists
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error("No session after sign up");
 
       const r = await apiFetch("/api/doctors/init", {
         method: "POST",
-        body: JSON.stringify({ cedula, full_name: fullName })
+        body: JSON.stringify({ cedula, full_name: fullName }),
       });
       const j = await r.json();
       if (!r.ok) throw new Error(j?.error || "Failed to init doctor");
@@ -48,10 +50,32 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={onSubmit} style={{ display: "grid", gap: 8 }}>
-      <input placeholder="Full name" value={fullName} onChange={e=>setFullName(e.target.value)} required />
-      <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required />
-      <input placeholder="Cédula" value={cedula} onChange={e=>setCedula(e.target.value)} required />
+      <input
+        placeholder="Full name"
+        value={fullName}
+        onChange={(e) => setFullName(e.target.value)}
+        required
+      />
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <input
+        placeholder="Cédula"
+        value={cedula}
+        onChange={(e) => setCedula(e.target.value)}
+        required
+      />
       <button disabled={busy}>{busy ? "Creating…" : "Create account"}</button>
       {msg && <p>{msg}</p>}
     </form>

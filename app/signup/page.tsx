@@ -46,7 +46,7 @@ export default function Signup() {
         position: "top-center",
       });
 
-      router.push("/on-boarding");
+      router.push("/signin");
     } catch (error) {
       console.error("Signup error:", error);
       toast.error("Signup failed. Please try again.");

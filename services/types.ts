@@ -24,3 +24,14 @@ export interface SignUpCredentials {
   phone?: string;
   role?: string;
 }
+export type ProfessionalProfileType = {
+  id: string;
+  whatsapp_no: string;
+  city: string;
+  country: string;
+  speciality: string;
+  professional_id: string;
+  is_verified: boolean;
+  created_at: string; // ISO date string
+  user_id: string;
+};

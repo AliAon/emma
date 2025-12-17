@@ -16,7 +16,7 @@ type Props = {
 };
 
 export default function StepFive({ setStep, total = 5 }: Props) {
-  const { values, setFieldValue, validateForm, setTouched } =
+  const { values, setFieldValue, validateForm, setTouched, errors } =
     useFormikContext<FormValues>();
 
   const handleNext = async () => {
@@ -32,6 +32,8 @@ export default function StepFive({ setStep, total = 5 }: Props) {
   const handleBack = () => {
     setStep((prev) => (prev - 1 + total) % total);
   };
+
+  console.log("errors", errors);
 
   return (
     <div className="space-y-6 relative h-[60vh]">

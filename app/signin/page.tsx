@@ -9,16 +9,31 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useSignInMutation } from "@/services/userApi";
-import { Session, SignInCredentials } from "@/services/types";
+import {
+  ProfessionalProfileType,
+  Session,
+  SignInCredentials,
+} from "@/services/types";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authuser, isLogin, usertoken } from "@/features/authSlice";
 import { Loader } from "lucide-react";
+import { useGetProfileQuery } from "@/services/profileApi";
 
 export default function Signin() {
   const router = useRouter();
   const [SignIn, { isLoading }] = useSignInMutation();
+  const user = useSelector((state: any) => state.auth.user);
+  const { data, refetch } = useGetProfileQuery(
+    {
+      userId: user?.id,
+    },
+    {
+      skip: !user?.id,
+    }
+  );
   const dispatch = useDispatch();
+  const profileData = data as ProfessionalProfileType[];
 
   // Yup Schema
   const SigninSchema = Yup.object().shape({
@@ -67,16 +82,21 @@ export default function Signin() {
                     email: values.email,
                     password: values.password,
                   }).unwrap();
-                  console.log("res", res);
 
                   localStorage.setItem("token", res.access_token);
                   localStorage.setItem("user", JSON.stringify(res.user));
                   dispatch(usertoken(res.access_token));
                   dispatch(authuser(res.user));
                   dispatch(isLogin(true));
-
+                  refetch();
                   toast.success("Logged in successfully!");
+                  //check Profile exists or not
+                  if (profileData.length === 0) {
+                    router.push("/on-boarding");
+                    return;
+                  }
 
+                  //otherwise go to dashboard
                   router.push("/dashboard");
                 } catch (error: any) {
                   toast.error(

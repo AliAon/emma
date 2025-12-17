@@ -26,7 +26,18 @@ export const profileApi = createApi({
       }),
       invalidatesTags: ["Profile"],
     }),
+    getProfile: build.query({
+      query: (filters) => {
+        const params = new URLSearchParams(filters);
+        return {
+          url: `/profile?${params}`,
+          method: "GET",
+        };
+      },
+      transformResponse: (response: any) => response.data,
+      providesTags: ["Profile"],
+    }),
   }),
 });
 
-export const { useCreateProfileMutation } = profileApi;
+export const { useCreateProfileMutation, useGetProfileQuery } = profileApi;

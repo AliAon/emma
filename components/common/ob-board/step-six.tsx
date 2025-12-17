@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useFormikContext } from "formik";
+import { Loader } from "lucide-react";
 
-export default function StepSix({ setStep, total = 6 }) {
+export default function StepSix({ setStep, total = 6, isLoading }) {
   const { errors, values } = useFormikContext();
   const handleBack = (e) => {
     e.preventDefault();
     setStep((prev) => (prev - 1 + total) % total);
   };
-  console.log("Errors:", errors);
-  console.log("values", values);
 
   return (
     <>
@@ -43,7 +42,7 @@ export default function StepSix({ setStep, total = 6 }) {
             variant={undefined}
             size={undefined}
           >
-            Start Verification
+            {isLoading ? <Loader /> : "Start Verification"}
           </Button>
         </div>
       </div>

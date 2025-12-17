@@ -87,7 +87,9 @@ export default function Onboarding() {
     },
     {
       name: "Verification",
-      component: <StepSix setStep={setStep} total={totalSteps} />,
+      component: (
+        <StepSix setStep={setStep} total={totalSteps} isLoading={isLoading} />
+      ),
     },
   ];
 
@@ -155,7 +157,14 @@ export default function Onboarding() {
           }}
           validationSchema={validationSchema}
           onSubmit={(values) => {
-            CreateProfile(values)
+            CreateProfile({
+              user_id: values.user_id,
+              whatsapp_no: values.whatsapp_no,
+              city: values.city,
+              country: values.country,
+              speciality: values.speciality,
+              professional_id: values.professional_id,
+            })
               .unwrap()
               .then(() => {
                 toast.success("Profile created successfully!");
@@ -163,7 +172,6 @@ export default function Onboarding() {
               })
               .catch((error) => {
                 toast.error("Profile creation failed. Please try again.");
-                // toast.error(error?.data?.message);
               });
           }}
         >

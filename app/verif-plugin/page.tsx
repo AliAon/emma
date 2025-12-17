@@ -21,7 +21,7 @@ export default function Verifplugin() {
       }}
     >
       <AnimatePresence mode="wait">
-        {step === 1 && (
+        {/* {step === 1 && (
           <motion.div
             key="step1"
             initial={{ opacity: 0 }}
@@ -43,9 +43,9 @@ export default function Verifplugin() {
               Next
             </Button>
           </motion.div>
-        )}
+        )} */}
 
-        {step === 2 && (
+        {step === 1 && (
           <motion.div
             key="step2"
             initial={{ opacity: 0 }}

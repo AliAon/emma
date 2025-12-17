@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const projectId = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID;
-const backend_url = process.env.NEXT_PUBLIC_BACKEND_URL;
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const nextConfig = {
   reactStrictMode: true,
@@ -13,8 +13,17 @@ const nextConfig = {
           {
             key: "Content-Security-Policy",
             value: `
-              connect-src 'self' https://*.veriff.com https://${projectId}.supabase.co ${backend_url};
-            `.replace(/\s+/g, " "),
+              default-src 'self';
+              connect-src 'self'
+                ${backendUrl}
+                https://*.veriff.com
+                https://${projectId}.supabase.co;
+              img-src 'self' data: https:;
+              script-src 'self' 'unsafe-inline' 'unsafe-eval';
+              style-src 'self' 'unsafe-inline';
+            `
+              .replace(/\s{2,}/g, " ")
+              .trim(),
           },
         ],
       },

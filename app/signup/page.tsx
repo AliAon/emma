@@ -37,14 +37,16 @@ export default function Signup() {
         name: values.name,
       }).unwrap();
       toast("Signup successful!", {
-        description: "Please check your email for verification.",
+        description:
+          "Please check your email for verification. then proceed to on-boarding",
         action: {
           label: "Undo",
           onClick: () => console.log("Undo"),
         },
+        position: "top-center",
       });
 
-      router.push("/signin");
+      router.push("/on-boarding");
     } catch (error) {
       console.error("Signup error:", error);
       toast.error("Signup failed. Please try again.");

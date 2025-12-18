@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useCreateProfileMutation } from "@/services/profileApi";
 
-export const validationSchema = Yup.object({
+const validationSchema = Yup.object({
   user_id: Yup.string().required("User is required"),
 
   whatsapp_no: Yup.string()

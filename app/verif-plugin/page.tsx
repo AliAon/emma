@@ -3,18 +3,31 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useVeriffVerifyMutation } from "@/services/profileApi";
 import { useSelector } from "react-redux";
 import { User } from "@/services/types";
 import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Verifplugin() {
   const [step, setStep] = useState(1);
   const [veriffVerify, { isLoading }] = useVeriffVerifyMutation();
   const user = useSelector((state: any) => state.auth.user as User);
+
+  // Step2
+  const searchParams = useSearchParams();
+  const step2 = searchParams?.get("step2");
+
+  // setStep
+  useEffect(() => {
+    if (step2) {
+      setStep(2);
+    }
+  }, [step2]);
+
   const handleNext = () => {
     veriffVerify({
       userId: user?.id,

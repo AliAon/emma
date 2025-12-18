@@ -15,7 +15,7 @@ const nextConfig = {
             value: `
               default-src 'self';
               connect-src 'self'
-                ${backendUrl}
+                http://localhost:3000
                 https://*.veriff.com
                 https://${projectId}.supabase.co;
               img-src 'self' data: https:;

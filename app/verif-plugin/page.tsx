@@ -5,12 +5,34 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useVeriffVerifyMutation } from "@/services/profileApi";
+import { useSelector } from "react-redux";
+import { User } from "@/services/types";
+import { Loader } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Verifplugin() {
   const [step, setStep] = useState(1);
-
+  const [veriffVerify, { isLoading }] = useVeriffVerifyMutation();
+  const user = useSelector((state: any) => state.auth.user as User);
   const handleNext = () => {
-    setStep(2);
+    veriffVerify({
+      userId: user?.id,
+    })
+      .unwrap()
+      .then((res) => {
+        localStorage.setItem("sessionId", res.sessionId);
+        localStorage.setItem("vendorData", res.vendorData);
+        const verificationUrl = res.verify_url;
+
+        window.location.href = verificationUrl; // 🚀 Redirect
+
+        // toast.success("User verified successfully");
+        // setStep(2);
+      })
+      .catch((error) => {
+        toast.error("Error verifying user: " + error.message);
+      });
   };
 
   return (
@@ -21,7 +43,7 @@ export default function Verifplugin() {
       }}
     >
       <AnimatePresence mode="wait">
-        {/* {step === 1 && (
+        {step === 1 && (
           <motion.div
             key="step1"
             initial={{ opacity: 0 }}
@@ -40,12 +62,12 @@ export default function Verifplugin() {
               variant={undefined}
               size={undefined}
             >
-              Next
+              {isLoading ? <Loader /> : "Verify"}
             </Button>
           </motion.div>
-        )} */}
+        )}
 
-        {step === 1 && (
+        {step === 2 && (
           <motion.div
             key="step2"
             initial={{ opacity: 0 }}

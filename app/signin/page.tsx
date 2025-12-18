@@ -18,22 +18,13 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { authuser, isLogin, usertoken } from "@/features/authSlice";
 import { Loader } from "lucide-react";
-import { useGetProfileQuery } from "@/services/profileApi";
+import { useLazyGetProfileQuery } from "@/services/profileApi";
 
 export default function Signin() {
   const router = useRouter();
   const [SignIn, { isLoading }] = useSignInMutation();
-  const user = useSelector((state: any) => state.auth.user);
-  const { data, refetch } = useGetProfileQuery(
-    {
-      userId: user?.id,
-    },
-    {
-      skip: !user?.id,
-    }
-  );
+  const [getProfile] = useLazyGetProfileQuery();
   const dispatch = useDispatch();
-  const profileData = data as ProfessionalProfileType[];
 
   // Yup Schema
   const SigninSchema = Yup.object().shape({
@@ -87,17 +78,23 @@ export default function Signin() {
                   localStorage.setItem("user", JSON.stringify(res.user));
                   dispatch(usertoken(res.access_token));
                   dispatch(authuser(res.user));
-                  dispatch(isLogin(true));
-                  refetch();
-                  toast.success("Logged in successfully!");
-                  //check Profile exists or not
-                  if (profileData.length === 0) {
-                    router.push("/on-boarding");
-                    return;
-                  }
+                  getProfile(null)
+                    .unwrap()
+                    .then((data) => {
+                      const profileData = data as ProfessionalProfileType;
+                      console.log("profileData", profileData);
+                      dispatch(isLogin(true));
 
-                  //otherwise go to dashboard
-                  router.push("/dashboard");
+                      //check Profile exists or not
+                      if (!profileData.id) {
+                        router.push("/on-boarding");
+                        return;
+                      }
+
+                      //otherwise go to dashboard
+                      router.push("/dashboard");
+                      toast.success("Logged in successfully!");
+                    });
                 } catch (error: any) {
                   toast.error(
                     error?.data?.message ||

@@ -7,8 +7,10 @@ export const profileApi = createApi({
     baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
     prepareHeaders: (headers) => {
       const token = getToken();
+      console.log("token", token);
+
       if (token) {
-        headers.set("x-auth-token", token);
+        headers.set("Authorization", `Bearer ${token}`);
       }
       headers.set("ngrok-skip-browser-warning", "1");
 
@@ -27,17 +29,28 @@ export const profileApi = createApi({
       invalidatesTags: ["Profile"],
     }),
     getProfile: build.query({
-      query: (filters) => {
-        const params = new URLSearchParams(filters);
+      query: () => {
         return {
-          url: `/profile?${params}`,
+          url: `/profile/userId`,
           method: "GET",
         };
       },
       transformResponse: (response: any) => response.data,
       providesTags: ["Profile"],
     }),
+    veriffVerify: build.mutation<any, any>({
+      query: (credentials) => ({
+        url: "/veriff/verifyUser",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
   }),
 });
 
-export const { useCreateProfileMutation, useGetProfileQuery } = profileApi;
+export const {
+  useCreateProfileMutation,
+  useGetProfileQuery,
+  useLazyGetProfileQuery,
+  useVeriffVerifyMutation,
+} = profileApi;

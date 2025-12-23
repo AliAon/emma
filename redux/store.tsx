@@ -7,6 +7,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { userApi } from "../services/userApi";
 import { profileApi } from "../services/profileApi";
+import { blogApi } from "@/services/blogApi";
 
 const persistConfig = {
   key: "root",
@@ -22,7 +23,8 @@ const makeStore = () =>
     middleware: (getDefaultMiddleware: any) =>
       getDefaultMiddleware()
         .concat(userApi.middleware)
-        .concat(profileApi.middleware),
+        .concat(profileApi.middleware)
+        .concat(blogApi.middleware),
   });
 
 const store = makeStore();
